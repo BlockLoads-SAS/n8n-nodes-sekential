@@ -1,0 +1,18 @@
+{
+	"node": "@blockloads/n8n-nodes-sekential",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Productivity"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/BlockLoads-SAS/n8n-nodes-sekential?tab=readme-ov-file#credentials"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/BlockLoads-SAS/n8n-nodes-sekential?tab=readme-ov-file"
+			}
+		]
+	}
+}

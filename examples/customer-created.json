@@ -1,0 +1,30 @@
+{
+	"name": "Read newly created Sekential customer",
+	"nodes": [
+		{
+			"parameters": { "resource": "customers", "event": "created" },
+			"id": "customer-trigger",
+			"name": "Customer Created",
+			"type": "@blockloads/n8n-nodes-sekential.sekentialTrigger",
+			"typeVersion": 1,
+			"position": [240, 300]
+		},
+		{
+			"parameters": {
+				"resource": "customers",
+				"operation": "get",
+				"recordId": { "mode": "id", "value": "={{$json.documentId}}" }
+			},
+			"id": "get-customer",
+			"name": "Get Customer",
+			"type": "@blockloads/n8n-nodes-sekential.sekential",
+			"typeVersion": 1,
+			"position": [480, 300]
+		}
+	],
+	"connections": {
+		"Customer Created": { "main": [[{ "node": "Get Customer", "type": "main", "index": 0 }]] }
+	},
+	"settings": {},
+	"active": false
+}

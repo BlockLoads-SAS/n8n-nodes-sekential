@@ -1,0 +1,31 @@
+{
+	"name": "Create a Sekential customer",
+	"nodes": [
+		{
+			"parameters": {},
+			"id": "manual-start",
+			"name": "Manual Trigger",
+			"type": "n8n-nodes-base.manualTrigger",
+			"typeVersion": 1,
+			"position": [240, 300]
+		},
+		{
+			"parameters": {
+				"resource": "customers",
+				"operation": "create",
+				"name": "Example customer",
+				"fields": "{}"
+			},
+			"id": "create-customer",
+			"name": "Create Customer",
+			"type": "@blockloads/n8n-nodes-sekential.sekential",
+			"typeVersion": 1,
+			"position": [480, 300]
+		}
+	],
+	"connections": {
+		"Manual Trigger": { "main": [[{ "node": "Create Customer", "type": "main", "index": 0 }]] }
+	},
+	"settings": {},
+	"active": false
+}

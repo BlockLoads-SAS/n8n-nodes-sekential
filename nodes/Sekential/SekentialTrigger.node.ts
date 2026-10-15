@@ -8,6 +8,7 @@ import {
 	type INodeType,
 	type INodeTypeDescription,
 } from 'n8n-workflow';
+import { requestErrorDetails } from './request-errors';
 
 const resources = [
 	{ name: 'Customer', value: 'customers' },
@@ -88,7 +89,9 @@ export class SekentialTrigger implements INodeType {
 						current.callbackUrl === this.getNodeWebhookUrl('default')
 					);
 				} catch (error) {
-					this.logger.warn('Could not verify Sekential subscription', { error });
+					this.logger.warn('Could not verify Sekential subscription', {
+						status: requestErrorDetails(error).status,
+					});
 					return false;
 				}
 			},
@@ -111,7 +114,7 @@ export class SekentialTrigger implements INodeType {
 				try {
 					await apiRequest(this, 'DELETE', `/${data.subscriptionId}`);
 				} catch (error) {
-					if (Number((error as { statusCode?: number }).statusCode) !== 404) return false;
+					if (requestErrorDetails(error).status !== 404) return false;
 				}
 				delete data.subscriptionId;
 				delete data.secret;

@@ -4,10 +4,23 @@ Native action and webhook trigger nodes for tenant-scoped Sekential workflows.
 
 ## Install and connect
 
-Install `@blockloads/n8n-nodes-sekential` in **Settings → Community nodes** on a
-self-hosted n8n instance. For local package development, run `npm ci` followed
-by `npm run dev`. The n8n server must have a public HTTPS webhook URL for
-triggers. See [n8n's community-node guide](https://docs.n8n.io/integrations/community-nodes/installation-and-management/).
+Once published to npm, an Owner or Admin can install
+`@blockloads/n8n-nodes-sekential` in **Settings → Community nodes** on a
+self-hosted n8n instance with community nodes enabled. Other members of that
+instance can then use the installed nodes. See
+[n8n's installation guide](https://docs.n8n.io/integrations/community-nodes/installation-and-management/gui-installation.md).
+
+The Sekential tenant must run the n8n integration backend, including
+`/api/n8n/connection`, `/api/n8n/subscriptions`, and its background delivery
+job. Triggers require a public HTTPS n8n webhook URL reachable from Sekential;
+configure n8n's production webhook URL before publishing a workflow. A
+successful credential test confirms that the tenant has the connection endpoint.
+
+n8n Cloud requires n8n to verify the package before it can be installed through
+the node picker. This package has not yet been verified. See the
+[verification process](https://docs.n8n.io/connect/create-nodes/deploy-your-node/submit-community-nodes.md).
+
+## Credentials
 
 In Sekential, create a personal REST API key in **Account → Integrations** for
 the tenant and user whose permissions the workflow should use. Set the
@@ -78,7 +91,12 @@ Sekential credential, and adjust the values before publishing.
 npm ci
 npm run build
 npm run lint
+npm test
 ```
+
+For interactive testing on a development n8n instance, use `npm run dev`.
+Maintainers should follow [PUBLISHING.md](PUBLISHING.md) for release checks,
+npm authentication, and n8n verification.
 
 The package is built for the current n8n community-node API. See the
 [Sekential API schema](https://app.sekential.com/api/openapi.json) for detailed

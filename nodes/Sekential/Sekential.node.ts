@@ -11,6 +11,7 @@ import {
 	type INodeTypeDescription,
 	type JsonObject,
 } from 'n8n-workflow';
+import { requestErrorDetails } from './request-errors';
 
 type Resource = 'customers' | 'journeys' | 'playbooks' | 'steps' | 'object-records';
 const resources: Array<{ name: string; value: Resource }> = [
@@ -52,13 +53,7 @@ async function request(
 				json: true,
 			})) as JsonObject;
 		} catch (error) {
-			const failure = error as {
-				statusCode?: number;
-				httpCode?: string;
-				response?: { status?: number; headers?: Record<string, string> };
-			};
-			const status = Number(failure.statusCode ?? failure.response?.status ?? failure.httpCode);
-			const retryAfter = Number(failure.response?.headers?.['retry-after']);
+			const { status, retryAfter } = requestErrorDetails(error);
 			const rateLimited =
 				status === 429 ||
 				((status === 401 || status === 403) && Number.isFinite(retryAfter) && retryAfter > 0);
@@ -108,7 +103,10 @@ async function listRecords(
 				'Sekential returned an invalid list response',
 			);
 		if (response.hasNextPage && response.docs.length === 0)
-			throw new NodeOperationError(context.getNode(), 'Sekential returned an empty page with more results');
+			throw new NodeOperationError(
+				context.getNode(),
+				'Sekential returned an empty page with more results',
+			);
 		rows.push(...(response.docs as JsonObject[]));
 		if (!response.hasNextPage || (!returnAll && rows.length >= limit)) break;
 		page++;
@@ -294,7 +292,9 @@ export class Sekential implements INodeType {
 					records = await listRecords(this, resource, limit, returnAll);
 				} else if (operation === 'get') {
 					const id = recordId(this, this.getNodeParameter('recordId', index));
-					records = [unwrapDocument(await request(this, 'GET', `${resource}/${encodeURIComponent(id)}`))];
+					records = [
+						unwrapDocument(await request(this, 'GET', `${resource}/${encodeURIComponent(id)}`)),
+					];
 				} else if (operation === 'create' || operation === 'update') {
 					if (operation === 'create' && !creatable.includes(resource))
 						throw new NodeOperationError(
@@ -319,7 +319,15 @@ export class Sekential implements INodeType {
 					} else
 						path += `/${encodeURIComponent(recordId(this, this.getNodeParameter('recordId', index)))}`;
 					records = [
-						unwrapDocument(await request(this, operation === 'create' ? 'POST' : 'PATCH', path, undefined, fields)),
+						unwrapDocument(
+							await request(
+								this,
+								operation === 'create' ? 'POST' : 'PATCH',
+								path,
+								undefined,
+								fields,
+							),
+						),
 					];
 				} else throw new NodeOperationError(this.getNode(), `Unsupported operation: ${operation}`);
 				for (const record of records) output.push({ json: record, pairedItem: { item: index } });
@@ -331,7 +339,9 @@ export class Sekential implements INodeType {
 				if (error instanceof NodeOperationError)
 					throw new NodeOperationError(this.getNode(), error.message, { itemIndex: index });
 				if (error instanceof NodeApiError)
-					throw new NodeApiError(this.getNode(), error as unknown as JsonObject, { itemIndex: index });
+					throw new NodeApiError(this.getNode(), error as unknown as JsonObject, {
+						itemIndex: index,
+					});
 				if (error instanceof SyntaxError || (error as Error).message?.startsWith('Fields must'))
 					throw new NodeOperationError(this.getNode(), error as Error, { itemIndex: index });
 				throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: index });

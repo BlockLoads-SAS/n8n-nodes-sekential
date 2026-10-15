@@ -17,6 +17,15 @@ export class SekentialApi implements ICredentialType {
 
 	properties: INodeProperties[] = [
 		{
+			displayName: 'Tenant URL',
+			name: 'tenantUrl',
+			type: 'string',
+			required: true,
+			default: '',
+			placeholder: 'https://my-tenant.sekential.com',
+			description: 'URL of the Sekential tenant that owns the API key',
+		},
+		{
 			displayName: 'API Key',
 			name: 'apiKey',
 			type: 'string',
@@ -37,8 +46,7 @@ export class SekentialApi implements ICredentialType {
 
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: 'https://app.sekential.com/api',
-			url: '/users/me',
+			url: '={{$credentials.tenantUrl.replace(/\\/$/, "")}}/api/n8n/connection',
 			method: 'GET',
 		},
 	};

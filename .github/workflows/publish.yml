@@ -57,11 +57,5 @@ jobs:
 
       - name: Release
         # The n8n CLI lints, builds, and publishes with provenance in Actions.
-        # NPM_TOKEN bootstraps a new npm package. Later releases use OIDC.
-        run: |
-          if [ -n "$NPM_TOKEN" ]; then
-            npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
-          fi
-          npm run release
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # npm authenticates through the configured GitHub OIDC publisher.
+        run: npm run release

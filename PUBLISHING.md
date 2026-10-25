@@ -28,13 +28,20 @@ An npm maintainer needs permission to create public packages under the
 `@blockloads` scope. The npm organization and GitHub organization are separate
 accounts; check the npm scope and publishing rights first.
 
-Trusted publishing needs an existing npm package, so the first publication
-needs a bootstrap credential. Create a short-lived granular npm access token.
-Under **Packages and scopes**, select **Read and write (publish and stage)**
-and the `@blockloads` scope, with **bypass 2FA** enabled. Organization-management
-permissions alone do not grant package publishing access.
-Store it as the `NPM_TOKEN` Actions secret in
-`BlockLoads-SAS/n8n-nodes-sekential`. Never put it in a tracked file.
+Trusted publishing needs an existing npm package. With npm 11.21.0 and an
+interactive npm session with 2FA enabled, stage a disposable prerelease tarball
+under a separate version and dist-tag:
+
+```bash
+npm stage publish <bootstrap-prerelease.tgz> --access public --tag bootstrap
+```
+
+For a new package, npm creates a public `0.0.0-stage` placeholder. The staged
+tarball stays unpublished until approved. Configure the trusted publisher below
+against that package and verify it with `npm trust list
+@blockloads/n8n-nodes-sekential`. Complete the maintainer's personal 2FA check in
+an ordinary browser tab. Keep the reviewed release version unchanged and leave
+the disposable stage unapproved.
 
 Release the prepared version from `main` by pushing its matching tag, such as
 `0.2.0` for package version `0.2.0`. Tags with a `v` prefix are also accepted.
@@ -42,11 +49,13 @@ The workflow rejects a tag that differs from `package.json`, or a tagged
 commit that has not reached `main`. It builds and tests, then uses the n8n
 CLI to lint, rebuild, and publish with provenance.
 
-After the package appears on npm, configure trusted publishing below, remove
-the `NPM_TOKEN` repository secret, and revoke the bootstrap token.
+The first real release uses the trusted publisher and GitHub Actions provenance.
+After verifying that release, reject only the disposable stage with `npm stage
+reject <stage-id>`, then log out of the temporary CLI session. This setup does
+not require an `NPM_TOKEN` repository secret or a token that bypasses 2FA.
 
-See npm's [trusted publisher prerequisites](https://docs.npmjs.com/cli/v11/commands/npm-trust/)
-[token permissions](https://docs.npmjs.com/creating-and-viewing-access-tokens/),
+See npm's [staged publishing guide](https://docs.npmjs.com/staged-publishing/),
+[trusted publisher prerequisites](https://docs.npmjs.com/cli/v11/commands/npm-trust/),
 and [scoped public package publishing](https://docs.npmjs.com/creating-and-publishing-scoped-public-packages/).
 
 ## Subsequent releases with trusted publishing

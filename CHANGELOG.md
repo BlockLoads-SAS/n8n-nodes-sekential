@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- Use a reachable author contact for n8n Creator Portal ownership verification.
+- Finalize staged bootstrap documentation and token-free GitHub trusted publishing.
+
 ## 0.2.0
 
 - Add tenant-scoped Customer, Journey, Playbook, Step, and Object record actions.

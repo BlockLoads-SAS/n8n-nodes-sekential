@@ -1,6 +1,6 @@
 {
 	"name": "@blockloads/n8n-nodes-sekential",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Official n8n community node for the Sekential API",
 	"license": "MIT",
 	"homepage": "https://sekential.com",
@@ -12,11 +12,11 @@
 	],
 	"author": {
 		"name": "Yoann Poupart",
-		"email": "66315201+Xmaster6y@users.noreply.github.com"
+		"email": "yoann.poupart@blockloads.com"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/BlockLoads-SAS/n8n-nodes-sekential.git"
+		"url": "git+https://github.com/BlockLoads-SAS/n8n-nodes-sekential.git"
 	},
 	"bugs": {
 		"url": "https://github.com/BlockLoads-SAS/n8n-nodes-sekential/issues"

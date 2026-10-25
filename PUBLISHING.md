@@ -92,6 +92,9 @@ installed nodes with a Sekential tenant and their own authorized credentials.
 
 For discovery in the node picker and installation on n8n Cloud, submit the
 published package to the [n8n Creator Portal](https://creators.n8n.io/nodes).
+Keep `author.email` in the published package set to a reachable public contact:
+the portal sends its ownership verification code to that address. A metadata
+change requires a new package version before starting verification again.
 First check the [verification guidelines](https://docs.n8n.io/connect/create-nodes/build-your-node/reference/verification-guidelines.md),
 including public MIT source, documentation, no runtime dependencies, passing
 automated checks, and a GitHub Actions publication with provenance. Review
